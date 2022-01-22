@@ -25,19 +25,23 @@ func main() {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-	r, err := regexp.Compile("^##")
+	// ## 1.0.0 (2021-12-13)
+	r, err := regexp.Compile(`## \d+\.\d+\.\d+`)
 
 	if (err) != nil {
 		log.Fatal(err)
 	}
 
 	lineCount := 0
-	text := ""
+	versionText := ""
+	var versionLineNumbers []int
 	for scanner.Scan() {
 		lineCount++
 		if r.MatchString(scanner.Text()) {
-			text += fmt.Sprintln(lineCount, scanner.Text())
+			versionText += fmt.Sprintln(lineCount, scanner.Text())
+			versionLineNumbers = append(versionLineNumbers, lineCount)
 		}
 	}
-	fmt.Print(text)
+	fmt.Print(versionText)
+	fmt.Print("Version line numbers:", versionLineNumbers)
 }
