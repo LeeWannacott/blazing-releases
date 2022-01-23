@@ -3,7 +3,9 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"regexp"
 )
@@ -44,4 +46,19 @@ func main() {
 	}
 	fmt.Print(versionText)
 	fmt.Print("Version line numbers:", versionLineNumbers)
+
+	// https://docs.github.com/en/rest/reference/releases
+	resp, err := http.Get("https://api.github.com/repos/leewannacott/table-sort-js/releases")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	sb := string(body)
+	log.Printf(sb)
 }
