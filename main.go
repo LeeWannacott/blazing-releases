@@ -74,13 +74,19 @@ func main() {
 	// fmt.Print(changeLogText)
 	// for _, changeLogLine := range changeLogText {
 	// fmt.Println(i, changeLogLine)
-	for i, lineNumber := range versionLineNumbers {
+	var releaseBody []string
+	for i, lineNumber := range versionLineNumbers[:len(versionLineNumbers)-1] {
+		releaseBodyLines := ""
 		fmt.Println("donkey kong", lineNumber, changeLogText[lineNumber])
 		if i != (len(versionLineNumbers) - 1) {
 			for j := versionLineNumbers[i]; j < versionLineNumbers[i+1]; j++ {
-				fmt.Println(j, changeLogText[j])
+				// fmt.Println(j, changeLogText[j])
+				releaseBodyLines += changeLogText[j] + "\n"
 			}
 		}
+		releaseBody = append(releaseBody, releaseBodyLines)
+		// fmt.Println("#####")
+		fmt.Println(i, releaseBody[i])
 	}
 	// }
 	// callGithubAPI()
