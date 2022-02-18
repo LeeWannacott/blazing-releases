@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+  "encoding/json"
+  // "reflect"
 )
 
 func check(e error) {
@@ -18,7 +20,7 @@ func check(e error) {
 
 func callGithubAPI() {
 	//https: //docs.github.com/en/rest/reference/releases
-	resp, err := http.Get("https://api.github.com/repos/leewannacott/table-sort-js/releases")
+	resp, err := http.Get("https://api.github.com/repos/quick-lint/quick-lint-js/tags")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -26,8 +28,19 @@ func callGithubAPI() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	sb := string(body)
-	log.Printf(sb)
+
+ sb := string(body)
+
+  type Tag struct {
+    Name string `json:"name"`
+    ZipballURL string `json:"zipball_url"`
+    TarballURL string `json:"tarball_url"`
+  }
+  fmt.Printf(sb)
+
+  var tags []Tag
+  json.Unmarshal([]byte(sb), &tags)
+  fmt.Printf("tags : %+v", tags)
 }
 
 func getVersionLineNumbers(scanner *bufio.Scanner) ([]int, []string) {
@@ -67,17 +80,13 @@ func main() {
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
 	versionLineNumbers, changeLogText := getVersionLineNumbers(scanner)
-	fmt.Print("Version line numbers:", versionLineNumbers)
+	fmt.Println("Version line numbers:", versionLineNumbers)
 
-	print("bingo")
-	// textBody := ""
-	// fmt.Print(changeLogText)
-	// for _, changeLogLine := range changeLogText {
-	// fmt.Println(i, changeLogLine)
 	var releaseBody []string
-	for i, lineNumber := range versionLineNumbers[:len(versionLineNumbers)-1] {
+
+	for i := range versionLineNumbers[:len(versionLineNumbers)-1] {
 		releaseBodyLines := ""
-		fmt.Println("donkey kong", lineNumber, changeLogText[lineNumber])
+  // fmt.Println("donkey kong", lineNumber, changeLogText[lineNumber])
 		if i != (len(versionLineNumbers) - 1) {
 			for j := versionLineNumbers[i]; j < versionLineNumbers[i+1]; j++ {
 				// fmt.Println(j, changeLogText[j])
@@ -89,5 +98,5 @@ func main() {
 		fmt.Println(i, releaseBody[i])
 	}
 	// }
-	// callGithubAPI()
+	callGithubAPI()
 }
