@@ -18,7 +18,7 @@ func check(e error) {
 	}
 }
 
-func getTagsFromApi() {
+func getTagsFromApi() string {
 	//https: //docs.github.com/en/rest/reference/releases
 	resp, err := http.Get("https://api.github.com/repos/quick-lint/quick-lint-js/tags")
 	if err != nil {
@@ -40,7 +40,8 @@ func getTagsFromApi() {
 
 	var tags []Tag
 	json.Unmarshal([]byte(sb), &tags)
-	//fmt.Printf("tags : %+v", tags)
+	tagsForEachRelease := fmt.Sprintf("tags : %+v", tags)
+	return tagsForEachRelease
 }
 
 func getVersionLineNumbers(scanner *bufio.Scanner) ([]int, []string, int) {
@@ -69,25 +70,14 @@ func getVersionLineNumbers(scanner *bufio.Scanner) ([]int, []string, int) {
 	return versionLineNumbers, changeLogText, counterForChangeLogLength
 }
 
-func main() {
-	fmt.Println("quick release notes.")
-	file, err := os.Open("./docs/CHANGELOG.md")
-	if (err) != nil {
-		log.Fatal(err)
-	}
-
-	defer file.Close()
-	scanner := bufio.NewScanner(file)
-	versionLineNumbers, changeLogText, changeLogLength := getVersionLineNumbers(scanner)
-	fmt.Println("Version line numbers:", versionLineNumbers)
-
+func makeReleaseSlice(versionLineNumbers []int, changeLogText []string, changeLogLength int) []string {
 	// Store contributors and errors from end of changelog.
 	contributorsAndErrors := ""
 	for i := 4 + versionLineNumbers[len(versionLineNumbers)-1]; i < changeLogLength; i++ {
 		contributorsAndErrors += changeLogText[i] + "\n"
 	}
 
-	var releaseBody []string
+	var releaseNotesForEachVersion []string
 	for i, versionLineNumber := range versionLineNumbers[:len(versionLineNumbers)] {
 		releaseBodyLines := ""
 		// Last version (## 0.2.0) excluded with - 1
@@ -103,8 +93,28 @@ func main() {
 				releaseBodyLines += changeLogText[versionLineNumber+j] + "\n"
 			}
 		}
-		releaseBody = append(releaseBody, releaseBodyLines+contributorsAndErrors)
-		fmt.Println(i, releaseBody[i])
+		releaseNotesForEachVersion = append(releaseNotesForEachVersion, releaseBodyLines+contributorsAndErrors)
+		fmt.Println(releaseNotesForEachVersion[i])
 	}
-	getTagsFromApi()
+	return releaseNotesForEachVersion
+
+}
+
+func main() {
+	fmt.Println("Quick release notes running...")
+	file, err := os.Open("./docs/CHANGELOG.md")
+	if (err) != nil {
+		log.Fatal(err)
+	}
+
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
+	versionLineNumbers, changeLogText, changeLogLength := getVersionLineNumbers(scanner)
+	releaseNotesForEachVersion := makeReleaseSlice(versionLineNumbers, changeLogText, changeLogLength)
+	tagsForEachRelease := getTagsFromApi()
+	for _, release := range releaseNotesForEachVersion[:len(releaseNotesForEachVersion)] {
+		fmt.Println(release)
+	}
+	// fmt.Println("Version line numbers:", versionLineNumbers)
+	fmt.Println(tagsForEachRelease)
 }
