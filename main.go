@@ -12,12 +12,6 @@ import (
 	// "reflect"
 )
 
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
-
 func getTagsFromApi() string {
 	//https: //docs.github.com/en/rest/reference/releases
 	resp, err := http.Get("https://api.github.com/repos/quick-lint/quick-lint-js/tags")
@@ -73,12 +67,12 @@ func getVersionLineNumbers(scanner *bufio.Scanner) ([]int, []string, int) {
 func makeReleaseSlice(versionLineNumbers []int, changeLogText []string, changeLogLength int) []string {
 	// Store contributors and errors from end of changelog.
 	contributorsAndErrors := ""
-	for i := 4 + versionLineNumbers[len(versionLineNumbers)-1]; i < changeLogLength; i++ {
+	for i := 5 + versionLineNumbers[len(versionLineNumbers)-1]; i < changeLogLength; i++ {
 		contributorsAndErrors += changeLogText[i] + "\n"
 	}
 
 	var releaseNotesForEachVersion []string
-	for i, versionLineNumber := range versionLineNumbers[:len(versionLineNumbers)] {
+	for i, versionLineNumber := range versionLineNumbers[:] {
 		releaseBodyLines := ""
 		// Last version (## 0.2.0) excluded with - 1
 		if i < (len(versionLineNumbers) - 1) {
@@ -89,7 +83,7 @@ func makeReleaseSlice(versionLineNumbers []int, changeLogText []string, changeLo
 
 		// Handle last version (## 0.2.0)
 		if versionLineNumber == versionLineNumbers[len(versionLineNumbers)-1] {
-			for j := 0; j < 4; j++ {
+			for j := 0; j < 5; j++ {
 				releaseBodyLines += changeLogText[versionLineNumber+j] + "\n"
 			}
 		}
@@ -112,7 +106,7 @@ func main() {
 	versionLineNumbers, changeLogText, changeLogLength := getVersionLineNumbers(scanner)
 	releaseNotesForEachVersion := makeReleaseSlice(versionLineNumbers, changeLogText, changeLogLength)
 	tagsForEachRelease := getTagsFromApi()
-	for _, release := range releaseNotesForEachVersion[:len(releaseNotesForEachVersion)] {
+	for _, release := range releaseNotesForEachVersion[:] {
 		fmt.Println(release)
 	}
 	// fmt.Println("Version line numbers:", versionLineNumbers)
