@@ -8,10 +8,39 @@ Semantic Versioning.
 
 ## Unreleased
 
+### Added
+
+* Windows: The 32-bit x86 builds are now code-signed.
+
+## 2.3.0 (2022-02-24)
+
+[Downloads](https://c.quick-lint-js.com/releases/2.3.0/)
+
+### Added
+
+* An incomplete `class` now reports [E0199][] instead of failing with the
+  catch-all [E0054][]. (Thanks to [Dave Churchill][] for reporting.)
+* Statements before the first `case` in a `switch` now report [E0198][]
+  (implemented by [Himanshu][]).
+* When building from source, you can tell quick-lint-js to use your copy of
+  third-party dependencies instead of quick-lint-js' bundled
+  dependencies:
+  * `-DQUICK_LINT_JS_USE_BUNDLED_BOOST=OFF`: Use your own copy of Boost.
+  * `-DQUICK_LINT_JS_USE_BUNDLED_GOOGLE_BENCHMARK=OFF`: Use your own copy of Google Benchmark (benchmarks only).
+  * `-DQUICK_LINT_JS_USE_BUNDLED_GOOGLE_TEST=OFF`: Use your own copy of Google Test (tests only).
+  * `-DQUICK_LINT_JS_USE_BUNDLED_SIMDJSON=OFF`: Use your own copy of simdjson.
+
+## 2.2.0 (2022-02-17)
+
+[Downloads](https://c.quick-lint-js.com/releases/2.2.0/)
+
 ### Fixed
 
 * `x && <Element/>` no longer falsely reports [E0026][] (missing operand for
   operator). (Thanks to [Piotr Dąbrowski][] for reporting.)
+* In top-level code, `await <x/>` is now parsed as the `await` operator followed
+  by a JSX element (rather than `await` less-than-compared to `x`, followed by
+  jibberish).
 
 ### Changed
 
@@ -47,8 +76,8 @@ Semantic Versioning.
   arrow function'). ([E0176][] was previously reported only for non-`async`
   arrow functions.)
 * `let x = 'nah'; if (y) { let x = 'yah'; }` now reports [E0196][] ('new
-   variable shadows existing variable'). This warning is reported only when an
-   assignment (instead of a new variable declaration) was intended.
+  variable shadows existing variable'). This warning is reported only when an
+  assignment (instead of a new variable declaration) was intended.
 * `console.log(“hello world”);` now reports [E0197][] (''“' is not allowed for
   strings; use " instead').
 * `-1 ** 2` now reports [E0194][] (missing parentheses around left-hand side of
@@ -133,7 +162,7 @@ Beta release.
 
 ### Fixed
 
-* npm: The npm package now installs on macOS Apple Silicon when using the
+* npm: The npm package now installs on macOS Apple silicon when using the
   AArch64 (native) version of Node.js. (The package previously worked only on
   macOS Intel, or when using x86_64 Node.js with Rosetta.)
 
@@ -174,7 +203,7 @@ Beta release.
 ### Optimized
 
 * Identifier parsing is now SIMD-optimized for ARM systems, including Apple
-  Silicon. [See the patch
+  silicon. [See the patch
   here.](https://github.com/quick-lint/quick-lint-js/commit/79cf6e71f42722a8eca28ab20f288abdc41ec162)
 * Diagnostic message translations consume less space in executables and also
   take less time to process. [See the patch
@@ -195,7 +224,7 @@ Beta release.
   Sousa][]).
 * VS Code: The new `quick-lint-js.logging` setting allows you to show
   quick-lint-js' internal log messages in an Output window.
-* VS Code: Apple Silicon (e.g. M1) (ARM64) is now supported.
+* VS Code: Apple silicon (e.g. M1) (ARM64) is now supported.
 * VS Code: Linux ARM (32-bit) is now supported.
 * Vim: Improved performance for ALE versions v2.5.0 and newer (and v3.0.0 and
   newer). You should configure `g:ale_lint_on_text_changed` to `'always'` for
@@ -336,7 +365,7 @@ Beta release.
 * Various crashes given invalid JavaScript no longer happen (implemented by
   [wagner riffel][] and [David Vasileff][])
 * `for (const x of xs)` no longer incorrectly reports [E205][E0205] (missing
-   initializer in const declaration) (fixed by [Himanshu][])
+  initializer in const declaration) (fixed by [Himanshu][])
 * Windows: `quick-lint-js.config` files are now recognized if the containing
   directory contains non-ASCII characters
 * Fix SSE2 corruption on 32-bit Windows builds with MSVC.
@@ -396,6 +425,7 @@ Beta release.
 [Amir]: https://github.com/ahmafi
 [Christian Mund]: https://github.com/kkkrist
 [Daniel La Rocque]: https://github.com/dlarocque
+[Dave Churchill]: https://www.cs.mun.ca/~dchurchill/
 [David Vasileff]: https://github.com/dav000
 [Erlliam Mejia]: https://github.com/erlliam
 [Himanshu]: https://github.com/singalhimanshu
@@ -458,6 +488,8 @@ Beta release.
 [E0195]: https://quick-lint-js.com/errors/E0195/
 [E0196]: https://quick-lint-js.com/errors/E0196/
 [E0197]: https://quick-lint-js.com/errors/E0197/
+[E0198]: https://quick-lint-js.com/errors/E0198/
+[E0199]: https://quick-lint-js.com/errors/E0199/
 [E0203]: https://quick-lint-js.com/errors/E0203/
 [E0205]: https://quick-lint-js.com/errors/E0205/
 [E0207]: https://quick-lint-js.com/errors/E0207/
