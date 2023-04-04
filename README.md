@@ -13,8 +13,9 @@ Usage: /tmp/go-build81954260/b001/exe/main [OPTIONS]
     	(https://github.com/settings/tokens) generate a token with 'public_repo' or 'repo' permissions. Store token in a file (token.txt). Example: --token=$(cat token.txt)
 ```
 
-``` bash
-$ go run main.go --target-repo=leewannacott/quick-release-notes --tags-repo=quick-lint/quick-lint-js --token=$(cat token.txt)```
+```
+$ go run main.go --target-repo=leewannacott/quick-release-notes --tags-repo=quick-lint/quick-lint-js --token=$(cat token.txt)
+```
 
 Go routines got performance from ~10 seconds to ~2 seconds.
 
