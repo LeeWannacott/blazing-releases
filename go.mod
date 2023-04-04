@@ -1,3 +1,3 @@
-module github.com/LeeWannacott/quick-release-notes
+module github.com/LeeWannacott/blazingly-fast-github-releases
 
 go 1.20
