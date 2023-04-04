@@ -2,15 +2,15 @@
 ## go run main.go --help
 
 ```
-Usage: /tmp/go-build1589409234/b001/exe/main [OPTIONS]
-  -AuthToken string
-    	Visit: (https://github.com/settings/tokens) generate a token with 'public_repo' or 'repo' permissions. Store access token in a file (token.txt). Example usage: -AuthToken=$(cat token.txt)
-  -Repo string
-    	GitHub repo where release notes to be released. (default "leewannacott/quick-lint-js")
-  -TagsRepo string
-    	GitHub repo to get release tags from. (default "quick-lint/quick-lint-js")
+Usage: /tmp/go-build81954260/b001/exe/main [OPTIONS]
   -help
-    	Print usage information. Example: $ go run main.go -Repo=leewannacott/quick-lint-js -TagsRepo=quick-lint/quick-lint-js -AuthToken=$(cat token.txt)
+    	Example: $ go run main.go --target-repo=leewannacott/quick-release-notes --tags-repo=quick-lint/quick-lint-js --token=$(cat token.txt)
+  -tags-repo string
+    	GitHub repo to get release tags from. (default "leewannacott/quick-lint-js")
+  -target-repo string
+    	GitHub repo where you want the releases posted. (default "leewannacott/quick-release-notes")
+  -token string
+    	(https://github.com/settings/tokens) generate a token with 'public_repo' or 'repo' permissions. Store token in a file (token.txt). Example: --token=$(cat token.txt)
 ```
 
 `$ go run main.go -Repo=leewannacott/quick-lint-js -TagsRepo=quick-lint/quick-lint-js -AuthToken=$(cat token.txt)`
