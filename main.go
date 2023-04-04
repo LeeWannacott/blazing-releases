@@ -17,6 +17,7 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+	"time"
 )
 
 type tag struct {
@@ -74,9 +75,10 @@ const redColor = "\033[31m"
 const resetColor = "\033[0m"
 
 func main() {
-	help, authTokenPtr, repoPtr, tagsRepoPtr := parseFlags()
+	start := time.Now()
+	help, authTokenPtr, repoPtr, tagsRepoPtr, changeLogPtr := parseFlags()
 	displayHelp(help)
-	pathToChangeLog := getChangeLogPath()
+	pathToChangeLog := getChangeLogPath(*changeLogPtr)
 	file, err := os.Open(pathToChangeLog)
 	if err != nil {
 		log.Fatal(err)
@@ -98,18 +100,21 @@ func main() {
 	fmt.Println("Updated releases.")
 	createMissingReleases(releaseMetaData, *authTokenPtr, repoPath)
 	fmt.Println("Created missing releases.")
+	elapsed := time.Since(start)
+	fmt.Println("Time taken:", elapsed)
 }
 
-func parseFlags() (*bool, *string, *string, *string) {
+func parseFlags() (*bool, *string, *string, *string, *string) {
 	authTokenPtr := flag.String("token", "", "(https://github.com/settings/tokens) generate a token with 'public_repo' or 'repo' permissions. Store token in a file (token.txt). Example: --token=$(cat token.txt)")
-	repoPtr := flag.String("target-repo", "leewannacott/quick-release-notes", "GitHub repo where you want the releases posted.")
-	tagsRepoPtr := flag.String("tags-repo", "leewannacott/quick-lint-js", "GitHub repo to get release tags from.")
-	help := flag.Bool("help", false, "Example: $ go run main.go --target-repo=leewannacott/quick-release-notes --tags-repo=quick-lint/quick-lint-js --token=$(cat token.txt)")
+	tagsRepoPtr := flag.String("tags", "leewannacott/quick-lint-js", "Repo where you want to get the tags from.")
+	repoPtr := flag.String("target", "leewannacott/quick-release-notes", "Repo where you want to update the releases.")
+	changeLogPtr := flag.String("changelog", "docs/CHANGELOG.md", "Relative folder path to changelog.md file")
+	help := flag.Bool("help", false, "Example: $ go run main.go --target=leewannacott/quick-release-notes --tags=quick-lint/quick-lint-js --changelog=docs/CHANGELOG.md --token=$(cat token.txt)")
 	flag.Parse()
 	if *authTokenPtr == "" {
 		fmt.Println(redColor + "Error: No GitHub access token given for flag -token. Refer to --help" + resetColor)
 	}
-	return help, authTokenPtr, repoPtr, tagsRepoPtr
+	return help, authTokenPtr, repoPtr, tagsRepoPtr, changeLogPtr
 }
 
 func displayHelp(help *bool) {
@@ -120,9 +125,9 @@ func displayHelp(help *bool) {
 	}
 }
 
-func getChangeLogPath() string {
+func getChangeLogPath(changeLogPath string) string {
 	_, filename, _, _ := runtime.Caller(0)
-	pathToChangeLog := filepath.Join(filepath.Dir(filename), "docs/CHANGELOG.md")
+	pathToChangeLog := filepath.Join(filepath.Dir(filename), changeLogPath)
 	return pathToChangeLog
 }
 
