@@ -101,13 +101,13 @@ func main() {
 }
 
 func parseFlags() (*bool, *string, *string, *string) {
-	help := flag.Bool("help", false, "Print usage information. Example: $ go run update-release-notes.go -Repo=quick-lint/quick-lint-js -TagsRepo=quick-lint/quick-lint-js -AuthToken=$(cat token.txt)")
-	authTokenPtr := flag.String("AuthToken", "", "Visit: (https://github.com/settings/tokens) generate a token with 'public_repo' or 'repo' permissions. Store access token in a file (token.txt). Example usage: -AuthToken=$(cat token.txt)")
-	repoPtr := flag.String("Repo", "quick-lint/quick-lint-js", "GitHub repo where release notes to be released.")
-	tagsRepoPtr := flag.String("TagsRepo", "quick-lint/quick-lint-js", "GitHub repo to get release tags from.")
+	authTokenPtr := flag.String("token", "", "(https://github.com/settings/tokens) generate a token with 'public_repo' or 'repo' permissions. Store token in a file (token.txt). Example: --token=$(cat token.txt)")
+	repoPtr := flag.String("target-repo", "leewannacott/quick-release-notes", "GitHub repo where you want the releases posted.")
+	tagsRepoPtr := flag.String("tags-repo", "leewannacott/quick-lint-js", "GitHub repo to get release tags from.")
+	help := flag.Bool("help", false, "Example: $ go run main.go --target-repo=leewannacott/quick-release-notes --tags-repo=quick-lint/quick-lint-js --token=$(cat token.txt)")
 	flag.Parse()
 	if *authTokenPtr == "" {
-		fmt.Println(redColor + "Error: No GitHub access token given for flag -AuthToken. Refer to --help" + resetColor)
+		fmt.Println(redColor + "Error: No GitHub access token given for flag -token. Refer to --help" + resetColor)
 	}
 	return help, authTokenPtr, repoPtr, tagsRepoPtr
 }
@@ -122,7 +122,7 @@ func displayHelp(help *bool) {
 
 func getChangeLogPath() string {
 	_, filename, _, _ := runtime.Caller(0)
-	pathToChangeLog := filepath.Join(filepath.Dir(filename), "../docs/CHANGELOG.md")
+	pathToChangeLog := filepath.Join(filepath.Dir(filename), "docs/CHANGELOG.md")
 	return pathToChangeLog
 }
 
