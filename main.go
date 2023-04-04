@@ -1,6 +1,4 @@
 // Copyright (C) 2023  Lee Wannacott
-// See end of file for extended copyright information.
-
 package main
 
 import (
@@ -43,7 +41,6 @@ type releaseMetaData struct {
 	TagVersionReleaseBodyMap map[string]string
 	ReleaseVersionTagMap     map[string]string
 	ReleaseVersionTitleMap   map[string]string
-	TagReleaseVersionMap     map[string]string
 	LatestReleaseVersion     string
 }
 
@@ -104,13 +101,13 @@ func main() {
 }
 
 func parseFlags() (*bool, *string, *string, *string) {
-	help := flag.Bool("help", false, "Print usage information. Example: $ go run main.go -Repo=quick-lint/quick-lint-js -TagsRepo=quick-lint/quick-lint-js -AuthToken=$(cat token.txt)")
+	help := flag.Bool("help", false, "Print usage information. Example: $ go run update-release-notes.go -Repo=quick-lint/quick-lint-js -TagsRepo=quick-lint/quick-lint-js -AuthToken=$(cat token.txt)")
 	authTokenPtr := flag.String("AuthToken", "", "Visit: (https://github.com/settings/tokens) generate a token with 'public_repo' or 'repo' permissions. Store access token in a file (token.txt). Example usage: -AuthToken=$(cat token.txt)")
 	repoPtr := flag.String("Repo", "quick-lint/quick-lint-js", "GitHub repo where release notes to be released.")
 	tagsRepoPtr := flag.String("TagsRepo", "quick-lint/quick-lint-js", "GitHub repo to get release tags from.")
 	flag.Parse()
 	if *authTokenPtr == "" {
-		log.Fatalln(redColor + "Error: No GitHub access token given for flag -AuthToken. Refer to --help" + resetColor)
+		fmt.Println(redColor + "Error: No GitHub access token given for flag -AuthToken. Refer to --help" + resetColor)
 	}
 	return help, authTokenPtr, repoPtr, tagsRepoPtr
 }
@@ -135,8 +132,6 @@ func createMissingReleases(releaseMetaData releaseMetaData, authToken string, re
 		makeLatestRelease := "false"
 		if releaseVersion == releaseMetaData.LatestReleaseVersion {
 			makeLatestRelease = "true"
-		} else {
-			makeLatestRelease = "false"
 		}
 		repoOwner, repoName := splitAndEncodeURLPath(repoPath)
 		requestURL := fmt.Sprintf("https://api.github.com/repos/%v/%v/releases", repoOwner, repoName)
@@ -183,7 +178,6 @@ func validateTagsHaveReleases(releaseTagValidationInput releaseTagValidationInpu
 		TagVersionReleaseBodyMap: make(map[string]string),
 		ReleaseVersionTagMap:     make(map[string]string),
 		ReleaseVersionTitleMap:   make(map[string]string),
-		TagReleaseVersionMap:     make(map[string]string),
 		LatestReleaseVersion:     "",
 	}
 	for i, release := range releaseTagValidationInput.changeLog.versions {
@@ -212,9 +206,7 @@ func validateTagsHaveReleases(releaseTagValidationInput releaseTagValidationInpu
 				tagHasVersionNumber = true
 			}
 		}
-		if tagHasVersionNumber {
-			releaseMetaData.TagReleaseVersionMap[tag.Name] = tag.Name
-		} else {
+		if !tagHasVersionNumber {
 			fmt.Println(orangeColor+"WARNING: tag", tag.Name, "missing changelog version"+resetColor)
 		}
 	}
