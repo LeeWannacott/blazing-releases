@@ -1,5 +1,5 @@
 
-## go run main.go --help
+### go run main.go --help
 
 ```
 Usage: /tmp/go-build2653530073/b001/exe/main [OPTIONS]
@@ -18,6 +18,9 @@ Usage: /tmp/go-build2653530073/b001/exe/main [OPTIONS]
 ```
 $ go run main.go -target=leewannacott/quick-release-notes -tags=quick-lint/quick-lint-js -token=$(cat token.txt) -changelog=docs/CHANGELOG.md
 ```
+
+### Install golang 
+`https://go.dev/doc/install`
 
 Go routines got performance from ~10 seconds to ~2 seconds.
 
