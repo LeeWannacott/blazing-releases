@@ -22,8 +22,12 @@ $ go run main.go -target=leewannacott/blazingly-fast-releases -tags=quick-lint/q
 ### Install golang 
 `https://go.dev/doc/install`
 
+### Info:
 Go routines got performance from ~10 seconds to ~2 seconds.
 
 Aiming for compatibility with: https://keepachangelog.com/en/1.0.0/
 
 Developed for quick-lint-js: https://github.com/quick-lint/quick-lint-js/pull/669
+
+### Projects using blazingly-fast-releases:
+https://github.com/quick-lint/quick-lint-js
