@@ -278,7 +278,7 @@ func getTagsFromGitHub(tagsRepoPath string) []tag {
 
 func getChangeLogInfo(scanner *bufio.Scanner) changeLog {
 	titleAndVersionRE := regexp.MustCompile(`##\s*(?P<title>(?P<version>\d+(\.\d+)*).*)`)
-	unreleasedRE := regexp.MustCompile(`## Unreleased`)
+	unreleasedRE := regexp.MustCompile(`## \[?Unreleased\]?`)
 	var changeLogText []string
 	var versions []changeLogVersion
 	for scanner.Scan() {
