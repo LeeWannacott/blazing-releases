@@ -24,7 +24,7 @@ type tag struct {
 	Name string `json:"name"`
 }
 
-type releaseForUpdate struct {
+type gitHubReleases struct {
 	ID      int    `json:"id"`
 	Name    string `json:"name"`
 	Body    string `json:"body"`
@@ -43,6 +43,10 @@ type releaseMetaData struct {
 	ReleaseVersionTagMap     map[string]string
 	ReleaseVersionTitleMap   map[string]string
 	LatestReleaseVersion     string
+}
+
+type githubReleasesMap struct {
+	ReleaseTagVersionMap map[string]string
 }
 
 type changeLog struct {
@@ -95,10 +99,11 @@ func main() {
 		releaseNotes: releaseNotes,
 		repoPath:     repoPath,
 	}
+	releases, releaseTagMap := getReleases(*authTokenPtr, repoPath)
 	releaseMetaData := validateTagsHaveReleases(releaseTagValidationInput)
-	updateReleasesIfChanged(releaseMetaData, *authTokenPtr, repoPath)
+	updateReleasesIfChanged(releaseMetaData, *authTokenPtr, repoPath, releases)
 	fmt.Println("Updated releases.")
-	createMissingReleases(releaseMetaData, *authTokenPtr, repoPath)
+	createMissingReleases(releaseMetaData, *authTokenPtr, repoPath, releases, releaseTagMap)
 	fmt.Println("Created missing releases.")
 	elapsed := time.Since(start)
 	fmt.Println("Time taken:", elapsed)
@@ -131,34 +136,37 @@ func getChangeLogPath(changeLogPath string) string {
 	return pathToChangeLog
 }
 
-func createMissingReleases(releaseMetaData releaseMetaData, authToken string, repoPath string) {
+func createMissingReleases(releaseMetaData releaseMetaData, authToken string, repoPath string, releases []gitHubReleases, githubReleasesMap githubReleasesMap) {
 	createReleaseWaitGroup := &sync.WaitGroup{}
 	for releaseVersion, tagVersion := range releaseMetaData.ReleaseVersionTagMap {
-		makeLatestRelease := "false"
-		if releaseVersion == releaseMetaData.LatestReleaseVersion {
-			makeLatestRelease = "true"
+		// only send POST request if the tagVersion does not exist in the releases from the API.
+		if tagVersion != githubReleasesMap.ReleaseTagVersionMap[tagVersion] {
+			makeLatestRelease := "false"
+			if releaseVersion == releaseMetaData.LatestReleaseVersion {
+				makeLatestRelease = "true"
+			}
+			repoOwner, repoName := splitAndEncodeURLPath(repoPath)
+			requestURL := fmt.Sprintf("https://api.github.com/repos/%v/%v/releases", repoOwner, repoName)
+			postRequest := releaseRequest{
+				authToken:         authToken,
+				repoPath:          repoPath,
+				requestType:       "POST",
+				tagForRelease:     tagVersion,
+				versionTitle:      releaseMetaData.ReleaseVersionTitleMap[releaseVersion],
+				releaseNote:       releaseMetaData.TagVersionReleaseBodyMap[tagVersion],
+				makeLatestRelease: makeLatestRelease,
+			}
+			createReleaseWaitGroup.Add(1)
+			go updateOrCreateGitHubRelease(postRequest, requestURL, createReleaseWaitGroup)
 		}
-		repoOwner, repoName := splitAndEncodeURLPath(repoPath)
-		requestURL := fmt.Sprintf("https://api.github.com/repos/%v/%v/releases", repoOwner, repoName)
-		postRequest := releaseRequest{
-			authToken:         authToken,
-			repoPath:          repoPath,
-			requestType:       "POST",
-			tagForRelease:     tagVersion,
-			versionTitle:      releaseMetaData.ReleaseVersionTitleMap[releaseVersion],
-			releaseNote:       releaseMetaData.TagVersionReleaseBodyMap[tagVersion],
-			makeLatestRelease: makeLatestRelease,
-		}
-		createReleaseWaitGroup.Add(1)
-		go updateOrCreateGitHubRelease(postRequest, requestURL, createReleaseWaitGroup)
+
 	}
 	createReleaseWaitGroup.Wait()
 }
 
-func updateReleasesIfChanged(releaseMetaData releaseMetaData, authToken string, repoPath string) {
+func updateReleasesIfChanged(releaseMetaData releaseMetaData, authToken string, repoPath string, releases []gitHubReleases) {
 	updateReleaseWaitGroup := &sync.WaitGroup{}
 	repoOwner, repoName := splitAndEncodeURLPath(repoPath)
-	releases := getReleases(authToken, repoPath)
 	for _, release := range releases {
 		if release.Body != releaseMetaData.TagVersionReleaseBodyMap[release.TagName] {
 			requestURL := fmt.Sprintf("https://api.github.com/repos/%v/%v/releases/%v", repoOwner, repoName, release.ID)
@@ -224,7 +232,8 @@ func splitAndEncodeURLPath(urlPath string) (string, string) {
 	return owner, name
 }
 
-func getReleases(authToken string, repoPath string) []releaseForUpdate {
+func getReleases(authToken string, repoPath string) ([]gitHubReleases, githubReleasesMap) {
+	githubReleasesMap := githubReleasesMap{ReleaseTagVersionMap: make(map[string]string)}
 	repoOwner, repoName := splitAndEncodeURLPath(repoPath)
 	releasePath := fmt.Sprintf("https://api.github.com/repos/%v/%v/releases", repoOwner, repoName)
 	req, err := http.NewRequest("GET", releasePath, nil)
@@ -239,13 +248,16 @@ func getReleases(authToken string, repoPath string) []releaseForUpdate {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var eachRelease []releaseForUpdate
-	err = json.Unmarshal(body, &eachRelease)
+	var releases []gitHubReleases
+	err = json.Unmarshal(body, &releases)
 	if err != nil {
 		fmt.Println(redColor + string(body) + resetColor)
 		log.Fatal(err)
 	}
-	return eachRelease
+	for i := range releases {
+		githubReleasesMap.ReleaseTagVersionMap[releases[i].TagName] = releases[i].TagName
+	}
+	return releases, githubReleasesMap
 }
 
 func getTagsFromGitHub(tagsRepoPath string) []tag {
