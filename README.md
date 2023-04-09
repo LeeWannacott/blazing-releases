@@ -1,16 +1,16 @@
 ## Installation
 ```
-go install github.com/LeeWannacott/blazingly-fast-releases@latest
+go install github.com/LeeWannacott/blazing-releases@latest
 ```
 
 ## Usage
 ```
-blazingly-fast-releases -target=leewannacott/blazingly-fast-releases -tags=quick-lint/quick-lint-js -token=$(cat token.txt) -changelog=docs/CHANGELOG.md
+blazing-releases -target=leewannacott/blazing-releases -tags=quick-lint/quick-lint-js -token=$(cat token.txt) -changelog=docs/CHANGELOG.md
 ```
 
-## blazingly-fast-releases --help
+## blazing-releases --help
 ```
-Usage: blazingly-fast-releases [OPTIONS]
+Usage: blazing-releases [OPTIONS]
   --changelog string
     	Relative path to CHANGELOG.md. (default "docs/CHANGELOG.md")
   --help
@@ -33,5 +33,5 @@ Usage: blazingly-fast-releases [OPTIONS]
 
 * Developed for quick-lint-js: https://github.com/quick-lint/quick-lint-js/pull/669
 
-### Projects using blazingly-fast-releases:
+### Projects using blazing-releases:
 * https://github.com/quick-lint/quick-lint-js
