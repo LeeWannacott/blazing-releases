@@ -1,12 +1,14 @@
+### Install blazingly-fast-releases
+$```go install github.com/LeeWannacott/blazingly-fast-releases@latest```
 
-### go run main.go --help
-
+### $ blazingly-fast-releases --help
 ```
 Usage: /tmp/go-build2653530073/b001/exe/main [OPTIONS]
-  --help
-      Example: $ go run main.go --target=leewannacott/blazingly-fast-releases --tags=quick-lint/quick-lint-js --token=$(cat token.txt)
+Usage: blazingly-fast-releases [OPTIONS]
   --changelog string
     	Relative folder path to changelog.md file (default "docs/CHANGELOG.md")
+  --help
+    	Example: $ blazingly-fast-releases --target=leewannacott/blazingly-fast-releases --tags=quick-lint/quick-lint-js --changelog=docs/CHANGELOG.md --token=$(cat token.txt)
   --tags string
     	Repo where you want to get the tags from. (default "leewannacott/quick-lint-js")
   --target string
@@ -15,9 +17,10 @@ Usage: /tmp/go-build2653530073/b001/exe/main [OPTIONS]
     	(https://github.com/settings/tokens) generate a token with 'public_repo' or 'repo' permissions. Store token in a file (token.txt). Example: --token=$(cat token.txt)
 ```
 
-$ ```go run main.go -target=leewannacott/blazingly-fast-releases -tags=quick-lint/quick-lint-js -token=$(cat token.txt) -changelog=docs/CHANGELOG.md```
+### Example of running in the terminal (CLI)
+$ ```blazingly-fast-releases -target=leewannacott/blazingly-fast-releases -tags=quick-lint/quick-lint-js -token=$(cat token.txt) -changelog=docs/CHANGELOG.md```
 
-### Install golang 
+### Prerequisites: Install golang 
 * `https://go.dev/doc/install`
 
 ### Info:
