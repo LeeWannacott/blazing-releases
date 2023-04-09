@@ -106,11 +106,11 @@ func main() {
 }
 
 func parseFlags() (*bool, *string, *string, *string, *string) {
-	authTokenPtr := flag.String("token", "", "(https://github.com/settings/tokens) generate a token with 'public_repo' or 'repo' permissions. Store token in a file (token.txt). Example: --token=$(cat token.txt)")
-	tagsRepoPtr := flag.String("tags", "leewannacott/quick-lint-js", "Repo where you want to get the tags from.")
-	repoPtr := flag.String("target", "leewannacott/blazingly-fast-releases", "Repo where you want to update the releases.")
-	changeLogPtr := flag.String("changelog", "docs/CHANGELOG.md", "Relative folder path to changelog.md file")
-	help := flag.Bool("help", false, "Example: $ go run main.go --target=leewannacott/blazingly-fast-releases --tags=quick-lint/quick-lint-js --changelog=docs/CHANGELOG.md --token=$(cat token.txt)")
+	authTokenPtr := flag.String("token", "", "(https://github.com/settings/tokens) generate token with 'public_repo' or 'repo' (private repos) permission.")
+	tagsRepoPtr := flag.String("tags", "owner/repo", "Repo where you want tags from.")
+	repoPtr := flag.String("target", "owner/repo", "Repo where you want to update the releases.")
+	changeLogPtr := flag.String("changelog", "docs/CHANGELOG.md", "Relative path to CHANGELOG.md.")
+	help := flag.Bool("help", false, "Display help")
 	flag.Parse()
 	if *authTokenPtr == "" {
 		fmt.Println(redColor + "Error: No GitHub access token given for flag -token. Refer to --help" + resetColor)

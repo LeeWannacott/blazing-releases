@@ -1,29 +1,32 @@
-### Install blazingly-fast-releases
-$```go install github.com/LeeWannacott/blazingly-fast-releases@latest```
-
-### $ blazingly-fast-releases --help
+## Installation
 ```
-Usage: /tmp/go-build2653530073/b001/exe/main [OPTIONS]
+go install github.com/LeeWannacott/blazingly-fast-releases@latest
+```
+
+## Usage
+```
+blazingly-fast-releases -target=leewannacott/blazingly-fast-releases -tags=quick-lint/quick-lint-js -token=$(cat token.txt) -changelog=docs/CHANGELOG.md
+```
+
+## blazingly-fast-releases --help
+```
 Usage: blazingly-fast-releases [OPTIONS]
   --changelog string
-    	Relative folder path to changelog.md file (default "docs/CHANGELOG.md")
+    	Relative path to CHANGELOG.md. (default "docs/CHANGELOG.md")
   --help
-    	Example: $ blazingly-fast-releases --target=leewannacott/blazingly-fast-releases --tags=quick-lint/quick-lint-js --changelog=docs/CHANGELOG.md --token=$(cat token.txt)
+    	Display help
   --tags string
-    	Repo where you want to get the tags from. (default "leewannacott/quick-lint-js")
+    	Repo where you want tags from. (default "owner/repo")
   --target string
-    	Repo where you want to update the releases. (default "leewannacott/blazingly-fast-releases")
+    	Repo where you want to update the releases. (default "owner/repo")
   --token string
-    	(https://github.com/settings/tokens) generate a token with 'public_repo' or 'repo' permissions. Store token in a file (token.txt). Example: --token=$(cat token.txt)
+    	(https://github.com/settings/tokens) generate token with 'public_repo' or 'repo' (private repos) permission.
 ```
 
-### Example of running in the terminal (CLI)
-$ ```blazingly-fast-releases -target=leewannacott/blazingly-fast-releases -tags=quick-lint/quick-lint-js -token=$(cat token.txt) -changelog=docs/CHANGELOG.md```
+### Prerequisites:
+* Go: `https://go.dev/doc/install`
 
-### Prerequisites: Install golang 
-* `https://go.dev/doc/install`
-
-### Info:
+### Information:
 * Go routines got performance from ~10 seconds to ~2 seconds.
 
 * Aiming for compatibility with: https://keepachangelog.com/en/1.0.0/
