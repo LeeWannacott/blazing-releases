@@ -25,6 +25,7 @@ Usage: blazing-releases [OPTIONS]
 
 ### Prerequisites:
 * Go: `https://go.dev/doc/install`
+* [access token](https://github.com/settings/tokens) generate token with 'public_repo' access which is the least amount of permission required or select 'repo' to use with private repos in addition to pulic.
 
 ### Information:
 * Go routines got performance from ~10 seconds to ~2 seconds.
