@@ -1,9 +1,9 @@
-## Installation
+## Installation:
 ```
 go install github.com/LeeWannacott/blazing-releases@latest
 ```
 
-## Usage
+## Example of Usage:
 ```
 blazing-releases -target=leewannacott/blazing-releases -tags=quick-lint/quick-lint-js -token=$(cat token.txt) -changelog=docs/CHANGELOG.md
 ```
